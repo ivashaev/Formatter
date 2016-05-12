@@ -1,0 +1,2 @@
+while(true){ if    (i>0) {obj.doSomething(q);    i++;
+}else j=j*2; z=0;}
