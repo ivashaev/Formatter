@@ -9,5 +9,7 @@ public class LexerException extends Exception {
     public LexerException(Exception theE){
         e = theE;
     }
+    public LexerException(){
+    }
 
 }
