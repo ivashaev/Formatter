@@ -8,11 +8,12 @@ import java.io.PushbackReader;
  * Created by I.V. Ashaev on 12.05.2016.
  */
 public class FReader implements IReader {
+    static private int unreadBufferSize = 4;
     private PushbackReader stream;
 
     public FReader(String fileName) throws ReaderException {
         try {
-            stream = new PushbackReader(new FileReader(fileName));
+            stream = new PushbackReader(new FileReader(fileName), unreadBufferSize);
         }
         catch (Exception e){
             throw new ReaderException(e);
@@ -33,6 +34,15 @@ public class FReader implements IReader {
             int symbol = stream.read();
             stream.unread(symbol);
             return (char)symbol;
+        }
+        catch (Exception e){
+            throw new ReaderException(e);
+        }
+    }
+
+    public void unreadChar(char c) throws ReaderException {
+        try {
+            stream.unread(c);
         }
         catch (Exception e){
             throw new ReaderException(e);

@@ -6,6 +6,7 @@ package ru._7bits.reader;
 public interface IReader {
     public char getChar() throws ReaderException;
     public char seeChar() throws ReaderException;
+    public void unreadChar(char c) throws ReaderException;
     public boolean hasNext() throws ReaderException;
     public void close() throws ReaderException;
 }

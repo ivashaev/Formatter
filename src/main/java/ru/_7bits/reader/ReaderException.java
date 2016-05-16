@@ -8,4 +8,5 @@ public class ReaderException extends Exception {
     public ReaderException(Exception theE){
         e = theE;
     }
+    public ReaderException() {}
 }

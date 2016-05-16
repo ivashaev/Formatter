@@ -30,6 +30,22 @@ public class StringReader implements IReader {
             throw new ReaderException(e);
         }
     }
+
+    public void unreadChar(char c) throws ReaderException {
+        if (currentIndex <= 0) {
+            throw new ReaderException();
+        }
+        try {
+            currentIndex--;
+            if (c != string.charAt(currentIndex)) {
+                currentIndex++;
+                throw new ReaderException();
+            }
+        } catch (Exception e) {
+            throw new ReaderException(e);
+        }
+    }
+
     public boolean hasNext() throws ReaderException{
         return currentIndex < string.length();
     }

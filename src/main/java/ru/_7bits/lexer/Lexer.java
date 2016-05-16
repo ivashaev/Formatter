@@ -9,19 +9,18 @@ import ru._7bits.reader.ReaderException;
  */
 public class Lexer implements ILexer{
     private IReader reader;
+    private String stopSymbols = " \t\n\r;{}/\'\\\"()";
 
     static private boolean isSpace(char c){
         return (c == ' ' || c == '\t' || c == '\n' || c=='\r');
     }
 
     private Token getDefualtToken(char c) throws ReaderException{
-        String firstCharOfToken = " \t\n\r;{}/\'\\\"";
-
         StringBuilder sb = new StringBuilder();
         sb.append(c);
         while (reader.hasNext()) {
             c = reader.seeChar();
-            if (firstCharOfToken.indexOf(c) == -1){
+            if (stopSymbols.indexOf(c) == -1){
                 sb.append(reader.getChar());
             } else
                 break;
@@ -126,47 +125,206 @@ public class Lexer implements ILexer{
     }
 
     public Token getToken() throws LexerException{
-         try {
-             char c = ' ';
+        Token[] tokenToRecognizeLen1 = {
+                new Token(TokenType.SEMICOLON, ";"),
+                new Token(TokenType.COMMA, ","),
+                new Token(TokenType.COLON, ":"),
+                new Token(TokenType.DOT, "."),
+                new Token(TokenType.QUESTION_SIGN, "?"),
+                new Token(TokenType.LEFT_BRACE, "{"),
+                new Token(TokenType.RIGHT_BRACE, "}"),
+                new Token(TokenType.LEFT_PARENTHESIS, "("),
+                new Token(TokenType.RIGHT_PARENTHESIS, ")"),
+                new Token(TokenType.BIN_OPERATOR, "+"),
+                new Token(TokenType.BIN_OPERATOR, "-"),
+                new Token(TokenType.BIN_OPERATOR, "*"),
+                new Token(TokenType.BIN_OPERATOR, "/"),
+                new Token(TokenType.BIN_OPERATOR, "%"),
+                new Token(TokenType.BIN_OPERATOR, "="),
+                new Token(TokenType.BIN_OPERATOR, "<"),
+                new Token(TokenType.BIN_OPERATOR, ">"),
+                new Token(TokenType.BIN_OPERATOR, "&"),
+                new Token(TokenType.BIN_OPERATOR, "|"),
+                new Token(TokenType.BIN_OPERATOR, "^"),
+                new Token(TokenType.UNARY_OPERATOR, "!")
+        };
 
-             while (reader.hasNext() && isSpace(c = reader.getChar())) {
-                 // skip spaces
-             }
+        Token[] tokenToRecognizeLen2 = {
+                new Token(TokenType.BIN_OPERATOR, "+="),
+                new Token(TokenType.UNARY_OPERATOR, "++"),
+                new Token(TokenType.UNARY_OPERATOR, "+-"),
+                new Token(TokenType.BIN_OPERATOR, "-="),
+                new Token(TokenType.BIN_OPERATOR, "*="),
+                new Token(TokenType.BIN_OPERATOR, "/="),
+                new Token(TokenType.BIN_OPERATOR, "%="),
+                new Token(TokenType.BIN_OPERATOR, "=="),
+                new Token(TokenType.BIN_OPERATOR, "<="),
+                new Token(TokenType.BIN_OPERATOR, ">="),
+                new Token(TokenType.BIN_OPERATOR, "&="),
+                new Token(TokenType.BIN_OPERATOR, "|="),
+                new Token(TokenType.BIN_OPERATOR, "^="),
+                new Token(TokenType.BIN_OPERATOR, "<<"),
+                new Token(TokenType.BIN_OPERATOR, ">>"),
+                new Token(TokenType.BIN_OPERATOR, "&&"),
+                new Token(TokenType.BIN_OPERATOR, "||")
+        };
 
-             if (c == ' ') {
-                 return new Token(TokenType.EOF, "");
-             }
+        Token[] tokenToRecognizeLen3 = {
+                new Token(TokenType.BIN_OPERATOR, "<<<"),
+                new Token(TokenType.BIN_OPERATOR, ">>>"),
+                new Token(TokenType.BIN_OPERATOR, ">>="),
+                new Token(TokenType.BIN_OPERATOR, "<<=")
+        };
+        // tokens longer than 3 chars must be recognized by hand :)
 
-             if (c == ';') {
-                 return new Token(TokenType.SEMICOLON, ";");
-             }
-             if (c == '{') {
-                 return new Token(TokenType.LEFT_BRACE, "{");
-             }
-             if (c == '}') {
-                 return new Token(TokenType.RIGHT_BRACE, "}");
-             }
-             if (c == '/' && reader.hasNext()){
-                 if (reader.seeChar() == '/') {
-                     return getOneLineCommentToken(c);
-                 } else if (reader.seeChar() == '*') {
-                     return getMultilineCommentToken(c);
-                 } else {
-                     // not a comment, process as default later
-                 }
-             }
-             if (c == '\''){
-                 return getCharLiteral(c);
-             }
-             if (c == '\"'){
-                 return getStringLiteral(c);
-             }
+        StringBuilder sb = new StringBuilder(stopSymbols);
+        for (Token t: tokenToRecognizeLen1){
+            char first = t.getStrToken().charAt(0);
+            if (sb.toString().indexOf(first) == -1){
+                sb.append(first);
+            }
+        }
+        for (Token t: tokenToRecognizeLen2){
+            char first = t.getStrToken().charAt(0);
+            if (sb.toString().indexOf(first) == -1){
+                sb.append(first);
+            }
+        }
+        for (Token t: tokenToRecognizeLen3){
+            char first = t.getStrToken().charAt(0);
+            if (sb.toString().indexOf(first) == -1){
+                sb.append(first);
+            }
+        }
+        stopSymbols = sb.toString();
 
-             return getDefualtToken(c);
-         }
-         catch (Exception e){
-             throw new LexerException(e);
-         }
+        try {
+            char c = ' ', cNext = ' ', cNextNext = ' ';
+            int countRead = 0;
+
+            while (reader.hasNext() && isSpace(c = reader.getChar())) {
+                // skip spaces
+            }
+
+            if (c == ' ') {
+                return new Token(TokenType.EOF, "");
+            }
+
+            countRead = 1;
+            if (reader.hasNext()) {
+                cNext = reader.getChar();
+                countRead++;
+                if (reader.hasNext()) {
+                    cNextNext = reader.getChar();
+                    countRead++;
+                }
+            }
+
+            Token tokenResult = null;
+            if (countRead == 3) {
+                for (Token t : tokenToRecognizeLen3) {
+                    if (cNextNext == t.getStrToken().charAt(2) && cNext == t.getStrToken().charAt(1) && c == t.getStrToken().charAt(0)) {
+                        tokenResult = t;
+                    }
+                }
+                if (tokenResult == null) {
+                    reader.unreadChar(cNextNext);
+                    countRead--;
+                }
+            }
+            if (tokenResult == null && countRead == 2) {
+                for (Token t : tokenToRecognizeLen2) {
+                    if (cNext == t.getStrToken().charAt(1) && c == t.getStrToken().charAt(0)) {
+                        tokenResult = t;
+                    }
+                }
+                if (tokenResult == null) {
+                    reader.unreadChar(cNext);
+                    countRead--;
+                }
+            }
+            if (tokenResult == null) {
+                for (Token t : tokenToRecognizeLen1) {
+                    if (c == t.getStrToken().charAt(0)) {
+                        tokenResult = t;
+                    }
+                }
+                if (tokenResult == null) {
+                    countRead--;
+                    // the first char doesn't unread, explore it further
+                }
+            }
+
+            if (tokenResult != null) {
+                // distinguish // and /* from operators / and /=
+                if (c == '/' && reader.hasNext()) {
+                    if (reader.seeChar() == '/') {
+                        return getOneLineCommentToken(c);
+                    } else if (reader.seeChar() == '*') {
+                        return getMultilineCommentToken(c);
+                    }
+                }
+                //distinguishing <<<, >>> from <<<=. >>>=
+                if (tokenResult.getStrToken().equals("<<<") && reader.hasNext() && reader.seeChar() == '='){
+                    tokenResult = new Token(TokenType.BIN_OPERATOR, "<<<=");
+                }
+                else if (tokenResult.getStrToken().equals(">>>") && reader.hasNext() && reader.seeChar() == '='){
+                    tokenResult = new Token(TokenType.BIN_OPERATOR, ">>>=");
+                }
+                return tokenResult;
+            }
+
+            if (c == '\'') {
+                return getCharLiteral(c);
+            }
+            if (c == '\"') {
+                return getStringLiteral(c);
+            }
+
+            return getDefualtToken(c);
+
+        }
+        catch (Exception e){
+            throw new LexerException(e);
+        }
+
+
+//            if (c == ';') {
+//             return new Token(TokenType.SEMICOLON, ";");
+//            }
+//            if (c == '{') {
+//             return new Token(TokenType.LEFT_BRACE, "{");
+//            }
+//            if (c == '}') {
+//             return new Token(TokenType.RIGHT_BRACE, "}");
+//            }
+//            if (c == '(') {
+//             return new Token(TokenType.LEFT_PARENTHESIS, "(");
+//            }
+//            if (c == ')') {
+//             return new Token(TokenType.RIGHT_PARENTHESIS, ")");
+//            }
+//            if (c == '/' && reader.hasNext()){
+//             if (reader.seeChar() == '/') {
+//                 return getOneLineCommentToken(c);
+//             } else if (reader.seeChar() == '*') {
+//                 return getMultilineCommentToken(c);
+//             } else {
+//                 // not a comment, process as default later
+//             }
+//            }
+//            if (c == '\''){
+//             return getCharLiteral(c);
+//            }
+//            if (c == '\"'){
+//             return getStringLiteral(c);
+//            }
+//
+//            return getDefualtToken(c);
+//        }
+//        catch (Exception e){
+//            throw new LexerException(e);
+//        }
 
     }
 
