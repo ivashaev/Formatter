@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 import ru._7bits.reader.StringReader;
 
 /**
- * Created by User on 14.05.2016.
+ * Created by I.V. Ashaev on 14.05.2016.
  */
 public class LexerTest extends TestCase {
     public void testGetToken1() throws Exception {

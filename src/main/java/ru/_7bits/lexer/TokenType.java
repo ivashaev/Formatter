@@ -1,6 +1,7 @@
 package ru._7bits.lexer;
 
 /**
+ * Types of tokens.
  * Created by I.V. Ashaev on 12.05.2016.
  */
 public enum TokenType {
@@ -25,12 +26,17 @@ public enum TokenType {
     private boolean needNewline;
     private boolean needChar;
 
-    TokenType(boolean needNewline, boolean needChar){
+    /**
+     * Creates a new element.
+     * @param needNewline the token needs linebreak after it,
+     * @param needChar the token needs a single space char after it
+     */
+    TokenType(final boolean needNewline, final boolean needChar) {
         this.needNewline = needNewline;
         this.needChar = needChar;
     }
 
-    public boolean isNeedNewLine(){
+    public boolean isNeedNewLine() {
         return needNewline;
     }
 

@@ -8,30 +8,48 @@ public class StringReader implements IReader {
     private String string;
     private int currentIndex;
 
-    public StringReader(String str){
+    /**
+     * Creates a string-based input stream reader.
+     * @param str symbols to read
+     */
+    public StringReader(final String str) {
         string = str;
         currentIndex = 0;
     }
 
-    public char getChar() throws ReaderException{
+    /**
+     * Gets a current char
+     * @return a char which have read
+     * @throws ReaderException
+     */
+    public char getChar() throws ReaderException {
         try {
             return string.charAt(currentIndex++);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             throw new ReaderException(e);
         }
     }
 
-    public char seeChar()  throws ReaderException{
+    /**
+     * Returns a current char without removing it from the stream
+     * @return the current char in the stream
+     * @throws ReaderException
+     */
+
+    public char seeChar()  throws ReaderException {
         try {
             return string.charAt(currentIndex);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             throw new ReaderException(e);
         }
     }
 
-    public void unreadChar(char c) throws ReaderException {
+    /**
+     * Returns a single char back to the input stream.
+     * @param c a char to return
+     * @throws ReaderException
+     */
+    public void unreadChar(final char c) throws ReaderException {
         if (currentIndex <= 0) {
             throw new ReaderException();
         }
@@ -46,10 +64,16 @@ public class StringReader implements IReader {
         }
     }
 
-    public boolean hasNext() throws ReaderException{
+    /**
+     * Checks for a new element in the stream.
+     * @return true if the input stream contains a char
+     * @throws ReaderException
+     */
+    public boolean hasNext() throws ReaderException {
         return currentIndex < string.length();
     }
 
+    /** Closes the stream */
     public void close() throws ReaderException {
         //empty
     }

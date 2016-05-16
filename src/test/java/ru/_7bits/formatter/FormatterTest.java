@@ -10,7 +10,7 @@ import ru._7bits.writer.StringWriter;
 import java.io.File;
 
 /**
- * Created by User on 12.05.2016.
+ * Created by I.V. Ashaev on 12.05.2016.
  */
 public class FormatterTest extends TestCase {
 

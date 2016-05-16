@@ -6,24 +6,45 @@ package ru._7bits.writer;
 public class StringWriter implements IWriter {
     StringBuilder stringBuilder;
 
+    /**
+     * Creates a writer with empty output string.
+     */
     public StringWriter() {
         stringBuilder = new StringBuilder();
     }
 
-    public StringWriter(StringBuilder sb){
+    /**
+     * Creates writer with existing string builder.
+     * @param sb
+     */
+    public StringWriter(final StringBuilder sb){
         stringBuilder = sb;
     }
 
-    public void write(char c) throws WriterException{
+    /**
+     * Writes a string to the output stream.
+     * @param c the string to write
+     * @throws WriterException
+     */
+    public void write(final char c) throws WriterException {
         stringBuilder.append(c);
     }
 
-    public void write(String s) throws WriterException {
-        for (int i = 0; i < s.length(); i++){
+    /**
+     * Writes a string to the output stream.
+     * @param s the string to write
+     * @throws WriterException
+     */
+    public void write(final String s) throws WriterException {
+        for (int i = 0; i < s.length(); i++) {
             stringBuilder.append(s.charAt(i));
         }
     }
 
+    /**
+     * Closes the stream
+     * @throws WriterException
+     */
     public void close() throws WriterException{
         //empty
     }

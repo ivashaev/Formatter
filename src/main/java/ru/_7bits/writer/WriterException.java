@@ -5,7 +5,11 @@ package ru._7bits.writer;
  */
 public class WriterException extends Exception {
     private Exception e;
-    public WriterException(Exception theE) {
+    public WriterException(final Exception theE) {
         e = theE;
+    }
+
+    public Exception getE() {
+        return e;
     }
 }

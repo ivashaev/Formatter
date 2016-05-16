@@ -1,13 +1,19 @@
 package ru._7bits.lexer;
 
 /**
+ * A token for lexical analyzer
  * Created by I.V. Ashaev on 12.05.2016.
  */
 public class Token {
     private TokenType tokenType = TokenType.DEFAULT;
     private String strToken;
 
-    public Token(TokenType theType, String theStrToken){
+    /**
+     * Creates a token by its type and string representation.
+     * @param theType type of the token
+     * @param theStrToken string representation
+     */
+    public Token(final TokenType theType, final String theStrToken) {
         tokenType = theType;
         strToken = theStrToken;
     }
@@ -21,13 +27,19 @@ public class Token {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Token)) return false;
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Token)) {
+            return false;
+        }
 
         Token token = (Token) o;
 
-        if (tokenType != token.tokenType) return false;
+        if (tokenType != token.tokenType) {
+            return false;
+        }
         return strToken != null ? strToken.equals(token.strToken) : token.strToken == null;
 
     }

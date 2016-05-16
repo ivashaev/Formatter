@@ -5,9 +5,21 @@ import ru._7bits.reader.IReader;
 import ru._7bits.writer.IWriter;
 
 /**
- * Created by User on 14.05.2016.
+ * Interface of Formatter
+ * Created by I.V. Ashaev on 14.05.2016.
  */
 public interface IFormatter {
-    public void setLexer(ILexer lexer);
-    public void format(IReader reader, IWriter writer) throws FormatterException;
+    /**
+     * Setter for lexeme parser.
+     * @param lexer - lexeme parser to use.
+     */
+     void setLexer(final ILexer lexer);
+
+    /**
+     * Format a Java code.
+     * @param reader - input stream
+     * @param writer - output stream
+     * @throws FormatterException
+     */
+    void format(final IReader reader, final IWriter writer) throws FormatterException;
 }
